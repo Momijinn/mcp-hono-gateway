@@ -1,0 +1,13 @@
+node_modules
+dist
+npm-debug.log*
+.DS_Store
+.git
+.gitignore
+.vscode
+
+# Python caches (uvx downloads packages at runtime)
+__pycache__
+.pytest_cache
+.mypy_cache
+.venv
