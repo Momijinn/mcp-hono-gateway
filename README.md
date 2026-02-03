@@ -36,6 +36,7 @@ open http://localhost:3000
 - `POST/GET/DELETE /aws-pricing`
 - `POST/GET/DELETE /aws-knowledge`
 - `POST/GET/DELETE /context7`
+- `POST/GET/DELETE /tavily`
 - `POST/GET/DELETE /yfmcp`
 
 ## 使い方（MCP セッションの流れ）
@@ -87,7 +88,8 @@ curl -sS -D- -X POST http://localhost:3000/aws-pricing \
 - `BEARER_TOKEN`（任意）: 設定すると全ルートに Bearer 認証が掛かります（`Authorization: Bearer <token>` が必須）
 - `AWS_REGION`（任意。未指定なら `us-east-1`）: `/aws-pricing` の実行環境で使用
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`（必要な場合）: AWS 系 MCP サーバーが参照
-- `CONTEXT7_API_KEY`（必須）: `/context7` で使用（未設定だと起動時にエラー）
+- `CONTEXT7_API_KEY`（推奨）: `/context7` で使用（未設定でも起動はできますが、`/context7` のリクエストはエラーになります）
+- `TAVILY_API_KEY`（推奨）: `/tavily` で使用（未設定でも起動はできますが、`/tavily` のリクエストはエラーになります）
 - `CLOUDFLARED_TUNNEL_TOKEN`（Cloudflare Tunnel を使う場合）: `cloudflared` コンテナで使用
 
 ## Docker
