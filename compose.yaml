@@ -9,6 +9,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       CONTEXT7_API_KEY: ${CONTEXT7_API_KEY:-}
+      TAVILY_API_KEY: ${TAVILY_API_KEY:-}
 
   app-dev:
     profiles: ["dev"]
@@ -26,6 +27,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       CONTEXT7_API_KEY: ${CONTEXT7_API_KEY:-}
+      TAVILY_API_KEY: ${TAVILY_API_KEY:-}
 
   cloudflared:
     image: cloudflare/cloudflared:latest
