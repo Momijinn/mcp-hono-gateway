@@ -6,8 +6,8 @@ import { awsKnowledgeRoute } from './routes/aws-knowledge.js'
 import { awsPricingRoute } from './routes/aws-pricing.js'
 import { context7Route } from './routes/context7.js'
 import { serverTimeRoute } from './routes/server-time.js'
-import { yfmcpRoute } from './routes/yfmcp.js'
 import { tavilyRoute } from './routes/tavily.js'
+import { yfmcpRoute } from './routes/yfmcp.js'
 
 const app = new Hono()
 
