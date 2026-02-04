@@ -55,31 +55,20 @@ MCP Streamable HTTP は「JSON」と「SSE」を両方受けられる必要が�
 
 以降のリクエストは同じ `mcp-session-id` を付けて呼び出します。
 
-### curl での最小テスト
+### 推奨: MCP Inspector で確認する
 
-1) initialize:
+curl で JSON-RPC を手で組むより、MCP Inspector の UI で接続・疎通確認する方法を推奨します。
 
-```sh
-curl -sS -D- -X POST http://localhost:3000/aws-pricing \
-    -H 'Content-Type: application/json' \
-    -H 'Accept: application/json, text/event-stream' \
-    --data-binary '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"curl","version":"0"}}}'
-```
+1) ゲートウェイを起動（例: `npm run dev`）
+2) Inspector を起動: `npm run inspector`
+3) ブラウザで `http://localhost:6274` を開き、`mcp-inspector.json` のサーバー（例: `aws-pricing`）を選んで接続
 
-2) 返ってきた `mcp-session-id` を付けて `tools/list`:
+補足:
 
-```sh
-curl -sS -D- -X POST http://localhost:3000/aws-pricing \
-    -H 'Content-Type: application/json' \
-    -H 'Accept: application/json, text/event-stream' \
-    -H 'mcp-session-id: <paste-session-id-here>' \
-    --data-binary '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
-```
-
-ヒント:
-
-- `mcp-session-id` が無い状態で `initialize` 以外を叩くと `400` になります（仕様上「まず initialize」が必要）。
-- セッションを明示的に閉じたい場合は `DELETE /<route>` を `mcp-session-id` 付きで送ります。
+- `npm run inspector` は既定で `--server default-server` を指定して起動します（設定は [mcp-inspector.json](mcp-inspector.json)）。
+- 別のサーバーで開きたい場合: `npm run inspector -- --server aws-knowledge`
+- `BEARER_TOKEN` を有効にしている場合、Inspector 側で `Authorization: Bearer <token>` を送る必要があります。
+- 設定ファイルは [mcp-inspector.json](mcp-inspector.json) にあります（`http://localhost:3000/<route>` を前提）。
 
 ## 環境変数
 
@@ -91,6 +80,17 @@ curl -sS -D- -X POST http://localhost:3000/aws-pricing \
 - `CONTEXT7_API_KEY`（推奨）: `/context7` で使用（未設定でも起動はできますが、`/context7` のリクエストはエラーになります）
 - `TAVILY_API_KEY`（推奨）: `/tavily` で使用（未設定でも起動はできますが、`/tavily` のリクエストはエラーになります）
 - `CLOUDFLARED_TUNNEL_TOKEN`（Cloudflare Tunnel を使う場合）: `cloudflared` コンテナで使用
+
+### セッション/メモリ関連（任意）
+
+このゲートウェイは `initialize` ごとに MCP サーバープロセスを起動します。
+クライアントがセッションを閉じ忘れるとプロセスが残り続けてメモリを消費するため、アイドル/長寿命セッションを自動でクリーンアップする設定を用意しています。
+
+- `MCP_MAX_SESSIONS`（compose 既定: `10`）: 同時に保持するセッション数の上限（超えると `initialize` を `503` で拒否）
+- `MCP_SESSION_IDLE_MS`（compose 既定: `300000` = 5分）: この時間アクセスがないセッションを自動終了（`0` で無効化）
+- `MCP_SESSION_MAX_LIFETIME_MS`（compose 既定: `3600000` = 1時間）: セッションの最大生存時間（`0` で無効化）
+- `MCP_MAX_INIT_BODY_BYTES`（compose 既定: `250000` ≒ 250KB）: `initialize` の JSON ボディが大きすぎる場合に `413` で拒否
+- `MCP_LOG_MEMORY`（任意。`1` で有効化）: 1分ごとに `sessions` 数と `process.memoryUsage()` をログ出力
 
 ## Docker
 
