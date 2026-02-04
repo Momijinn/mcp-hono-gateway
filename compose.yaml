@@ -3,6 +3,8 @@ services:
     build:
       context: .
       target: prod
+    restart: unless-stopped
+    init: true
     environment:
       BEARER_TOKEN: ${BEARER_TOKEN:-}
       AWS_REGION: ${AWS_REGION:-us-east-1}
@@ -10,12 +12,19 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       CONTEXT7_API_KEY: ${CONTEXT7_API_KEY:-}
       TAVILY_API_KEY: ${TAVILY_API_KEY:-}
+      MCP_MAX_SESSIONS: ${MCP_MAX_SESSIONS:-10}
+      MCP_SESSION_IDLE_MS: ${MCP_SESSION_IDLE_MS:-300000}
+      MCP_SESSION_MAX_LIFETIME_MS: ${MCP_SESSION_MAX_LIFETIME_MS:-3600000}
+      MCP_MAX_INIT_BODY_BYTES: ${MCP_MAX_INIT_BODY_BYTES:-250000}
+      MCP_LOG_MEMORY: ${MCP_LOG_MEMORY:-}
 
   app-dev:
     profiles: ["dev"]
     build:
       context: .
       target: dev
+    restart: unless-stopped
+    init: true
     ports:
       - "3000:3000"
     volumes:
@@ -28,10 +37,16 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       CONTEXT7_API_KEY: ${CONTEXT7_API_KEY:-}
       TAVILY_API_KEY: ${TAVILY_API_KEY:-}
+      MCP_MAX_SESSIONS: ${MCP_MAX_SESSIONS:-10}
+      MCP_SESSION_IDLE_MS: ${MCP_SESSION_IDLE_MS:-300000}
+      MCP_SESSION_MAX_LIFETIME_MS: ${MCP_SESSION_MAX_LIFETIME_MS:-3600000}
+      MCP_MAX_INIT_BODY_BYTES: ${MCP_MAX_INIT_BODY_BYTES:-250000}
+      MCP_LOG_MEMORY: ${MCP_LOG_MEMORY:-}
 
   cloudflared:
     image: cloudflare/cloudflared:latest
     command: tunnel --no-autoupdate run
+    restart: unless-stopped
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARED_TUNNEL_TOKEN}
     depends_on:

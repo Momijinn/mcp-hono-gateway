@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "add:mcp": "tsx scripts/add-mcp-server.ts",
+    "inspector": "tsx scripts/run-inspector.ts",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check .",

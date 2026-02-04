@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "default-server": {
+      "type": "streamable-http",
+      "url": "http://localhost:3000/aws-pricing"
+    },
+    "aws-pricing": {
+      "type": "streamable-http",
+      "url": "http://localhost:3000/aws-pricing"
+    },
+    "aws-knowledge": {
+      "type": "streamable-http",
+      "url": "http://localhost:3000/aws-knowledge"
+    },
+    "context7": {
+      "type": "streamable-http",
+      "url": "http://localhost:3000/context7"
+    },
+    "tavily": {
+      "type": "streamable-http",
+      "url": "http://localhost:3000/tavily"
+    },
+    "yfmcp": {
+      "type": "streamable-http",
+      "url": "http://localhost:3000/yfmcp"
+    },
+    "server-time": {
+      "type": "streamable-http",
+      "url": "http://localhost:3000/server-time"
+    }
+  }
+}
