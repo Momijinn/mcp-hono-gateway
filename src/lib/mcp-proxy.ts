@@ -15,6 +15,7 @@ const MCP_MAX_SESSIONS = readIntEnv('MCP_MAX_SESSIONS', 50)
 const MCP_SESSION_IDLE_MS = readIntEnv('MCP_SESSION_IDLE_MS', 15 * 60_000)
 const MCP_SESSION_MAX_LIFETIME_MS = readIntEnv('MCP_SESSION_MAX_LIFETIME_MS', 2 * 60 * 60_000)
 const MCP_MAX_INIT_BODY_BYTES = readIntEnv('MCP_MAX_INIT_BODY_BYTES', 1_000_000)
+const MCP_MAX_POST_BODY_BYTES = readIntEnv('MCP_MAX_POST_BODY_BYTES', MCP_MAX_INIT_BODY_BYTES)
 const MCP_LOG_MEMORY = process.env.MCP_LOG_MEMORY === '1'
 
 const nowMs = () => Date.now()
@@ -140,8 +141,9 @@ export const createMcpProxy = (config: {
       const contentLength = c.req.header('content-length')
       if (contentLength) {
         const len = Number(contentLength)
-        if (Number.isFinite(len) && len > MCP_MAX_INIT_BODY_BYTES) {
-          return jsonRpcError(413, -32000, 'Request body too large')
+        const maxBytes = sessionIdHeader ? MCP_MAX_POST_BODY_BYTES : MCP_MAX_INIT_BODY_BYTES
+        if (Number.isFinite(len) && maxBytes > 0 && len > maxBytes) {
+          return jsonRpcError(413, -32000, `Request body too large (maxBytes=${maxBytes})`)
         }
       }
       try {

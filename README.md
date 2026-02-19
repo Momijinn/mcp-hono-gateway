@@ -38,6 +38,7 @@ open http://localhost:3000
 - `POST/GET/DELETE /context7`
 - `POST/GET/DELETE /tavily`
 - `POST/GET/DELETE /yfmcp`
+- `POST/GET/DELETE /exif`
 
 ## 使い方（MCP セッションの流れ）
 
@@ -89,7 +90,9 @@ curl で JSON-RPC を手で組むより、MCP Inspector の UI で接続・疎�
 - `MCP_MAX_SESSIONS`（compose 既定: `10`）: 同時に保持するセッション数の上限（超えると `initialize` を `503` で拒否）
 - `MCP_SESSION_IDLE_MS`（compose 既定: `300000` = 5分）: この時間アクセスがないセッションを自動終了（`0` で無効化）
 - `MCP_SESSION_MAX_LIFETIME_MS`（compose 既定: `3600000` = 1時間）: セッションの最大生存時間（`0` で無効化）
-- `MCP_MAX_INIT_BODY_BYTES`（compose 既定: `250000` ≒ 250KB）: `initialize` の JSON ボディが大きすぎる場合に `413` で拒否
+- `MCP_MAX_INIT_BODY_BYTES`（compose 既定: `250000` ≒ 250KB）: `initialize` の JSON ボディが大きすぎる場合に `413` で拒否（`0` で無効化）
+- `MCP_MAX_POST_BODY_BYTES`（任意）: セッション開始後の `POST`（tool 呼び出し等）の JSON ボディ上限（`0` で無効化）
+  - 画像を `base64` や `bytes` で渡す場合はここに引っかかりやすいので、`url` / `path` を使うか、上限を引き上げてください
 - `MCP_LOG_MEMORY`（任意。`1` で有効化）: 1分ごとに `sessions` 数と `process.memoryUsage()` をログ出力
 
 ## Docker
@@ -124,6 +127,11 @@ docker compose --profile dev down
 ```
 
 ## MCP サーバーを追加する
+
+### 自作 MCP サーバーの置き場所
+
+このリポジトリ内で stdio MCP サーバーを自作する場合は、実装を `src/mcp-servers/` に置きます。
+HTTP ルート（`src/routes/`）からそのサーバーを子プロセスとして起動して公開します（例: `/exif`）。
 
 ### ジェネレーター（推奨）
 
